@@ -52,10 +52,24 @@
     </div>
 
     <!-- Bagian 2: Template Surat Lamaran -->
+    <!-- Bagian 2: Template Surat Lamaran -->
     <div class="card">
-        <button class="btn-copy" onclick="copyText('surat-teks')">Salin Surat</button>
+        <div style="float: right; display: flex; gap: 8px;">
+            <button type="button" class="btn-copy" onclick="copyText('surat-teks')">Salin Teks</button>
+            <button type="button" class="btn-copy" style="background: #2563eb;" onclick="unduhDokumen('docx')">Unduh Word (.docx)</button>
+            <button type="button" class="btn-copy" style="background: #dc2626;" onclick="unduhDokumen('pdf')">Unduh PDF (.pdf)</button>
+        </div>
         <h2>2. Draf Surat Lamaran</h2>
-        <div class="surat-box" id="surat-teks">{{ hasil.surat_lamaran }}</div>
+        <p style="font-size: 13px; color: #64748b; margin-top: -8px;">*Anda bisa mengklik teks di bawah ini untuk mengedit langsung sebelum mengunduh.</p>
+        
+        <div class="surat-box" id="surat-teks" contenteditable="true">{{ hasil.surat_lamaran }}</div>
+
+        <!-- Form tersembunyi untuk mengirim teks surat ke backend saat klik Unduh -->
+        <form id="form-download" method="POST" style="display: none;">
+            <textarea name="surat_teks" id="input-surat-teks"></textarea>
+            <input type="hidden" name="posisi" value="{{ hasil.posisi }}">
+            <input type="hidden" name="perusahaan" value="{{ hasil.perusahaan }}">
+        </form>
     </div>
 
     <!-- Bagian 3: Poin CV -->
@@ -75,6 +89,22 @@
             navigator.clipboard.writeText(text).then(() => {
                 alert("Teks surat lamaran berhasil disalin!");
             });
+        }
+    </script>
+    <script>
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Teks surat lamaran berhasil disalin!");
+            });
+        }
+
+        function unduhDokumen(format) {
+            const teksSurat = document.getElementById('surat-teks').innerText;
+            const form = document.getElementById('form-download');
+            document.getElementById('input-surat-teks').value = teksSurat;
+            form.action = '/download/' + format;
+            form.submit();
         }
     </script>
 
