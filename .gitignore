@@ -1,0 +1,14 @@
+# Keamanan & Data Pribadi (WAJIB DIABAIKAN)
+.env
+master_profil.txt
+
+# File sementara & Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+
+# Folder output file lamaran (jika nanti dibuat)
+output/
+*.pdf
