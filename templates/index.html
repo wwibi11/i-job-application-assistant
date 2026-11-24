@@ -2,27 +2,76 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>AI Otomatisasi Lamaran Kerja</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Job Application Assistant</title>
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
-        textarea { width: 100%; height: 180px; padding: 10px; margin-bottom: 10px; }
-        button { padding: 10px 20px; background: #0066cc; color: white; border: none; cursor: pointer; }
-        .hasil { background: #f4f4f4; padding: 20px; margin-top: 20px; white-space: pre-wrap; border-radius: 6px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        h1, h2, h3 { color: #1e293b; margin-top: 0; }
+        textarea { width: 100%; height: 180px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; box-sizing: border-box; }
+        button { background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 12px; font-weight: 600; }
+        button:hover { background: #1d4ed8; }
+        .btn-copy { background: #059669; padding: 6px 14px; font-size: 13px; float: right; margin-top: 0; }
+        .btn-copy:hover { background: #047857; }
+        .badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        .surat-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 6px; white-space: pre-wrap; line-height: 1.6; font-family: 'Times New Roman', Times, serif; font-size: 15px; }
+        .error { background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        ul { line-height: 1.7; padding-left: 20px; }
     </style>
 </head>
 <body>
-    <h2>Generator Lamaran Kerja Otomatis</h2>
-    <form method="POST">
-        <label>Tempel Teks Lowongan Kerja (Loker):</label><br>
-        <textarea name="info_loker" placeholder="Paste detail lowongan kerja di sini..." required></textarea><br>
-        <button type="submit">Proses dengan AI</button>
-    </form>
 
-    {% if hasil_ai %}
-    <div class="hasil">
-        <h3>Hasil Penyesuaian AI:</h3>
-        {{ hasil_ai }}
+    <div class="card">
+        <h1>AI Penyesuai Lamaran Kerja</h1>
+        <form method="POST">
+            <label for="loker"><strong>Tempel Deskripsi Lowongan Kerja:</strong></label><br><br>
+            <textarea name="loker" id="loker" placeholder="Paste teks lowongan kerja di sini..." required>{{ loker_input }}</textarea>
+            <button type="submit">Buat Draf Lamaran</button>
+        </form>
+    </div>
+
+    {% if error_msg %}
+    <div class="error">{{ error_msg }}</div>
+    {% endif %}
+
+    {% if hasil %}
+    <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
+    <div class="card">
+        <h2>1. Analisis Kecocokan <span class="badge">Kecocokan: {{ hasil.skor_kecocokan }}</span></h2>
+        <p><strong>Target:</strong> {{ hasil.posisi }} — {{ hasil.perusahaan }}</p>
+        <ul>
+            {% for poin in hasil.analisis_kecocokan %}
+            <li>{{ poin }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Bagian 2: Template Surat Lamaran -->
+    <div class="card">
+        <button class="btn-copy" onclick="copyText('surat-teks')">Salin Surat</button>
+        <h2>2. Draf Surat Lamaran</h2>
+        <div class="surat-box" id="surat-teks">{{ hasil.surat_lamaran }}</div>
+    </div>
+
+    <!-- Bagian 3: Poin CV -->
+    <div class="card">
+        <h2>3. Poin CV yang Harus Ditonjolkan</h2>
+        <ul>
+            {% for cv in hasil.poin_cv %}
+            <li>{{ cv }}</li>
+            {% endfor %}
+        </ul>
     </div>
     {% endif %}
+
+    <script>
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Teks surat lamaran berhasil disalin!");
+            });
+        }
+    </script>
+
 </body>
 </html>
