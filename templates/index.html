@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Otomatisasi Lamaran Kerja</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; }
+        textarea { width: 100%; height: 180px; padding: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #0066cc; color: white; border: none; cursor: pointer; }
+        .hasil { background: #f4f4f4; padding: 20px; margin-top: 20px; white-space: pre-wrap; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h2>Generator Lamaran Kerja Otomatis</h2>
+    <form method="POST">
+        <label>Tempel Teks Lowongan Kerja (Loker):</label><br>
+        <textarea name="info_loker" placeholder="Paste detail lowongan kerja di sini..." required></textarea><br>
+        <button type="submit">Proses dengan AI</button>
+    </form>
+
+    {% if hasil_ai %}
+    <div class="hasil">
+        <h3>Hasil Penyesuaian AI:</h3>
+        {{ hasil_ai }}
+    </div>
+    {% endif %}
+</body>
+</html>
