@@ -1,49 +1,58 @@
-from flask import Flask, render_template, request, jsonify
 import os
+from flask import Flask, render_template, request
+from dotenv import load_dotenv
+from google import genai
+
+# 1. Muat API Key dari file .env
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError("GEMINI_API_KEY tidak ditemukan di file .env!")
+
+# 2. Inisialisasi Client Gemini SDK Baru (tanpa genai.configure)
+client = genai.Client(api_key=api_key)
 
 app = Flask(__name__)
-# Pastikan folder uploads ada untuk menyimpan file sementara
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/')
+def baca_master_profil():
+    with open("master_profil.txt", "r", encoding="utf-8") as file:
+        return file.read()
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    # Menampilkan halaman form upload
-    return '''
-    <!doctype html>
-    <title>Sistem Pelamar Kerja AI</title>
-    <h1>Upload Info Loker</h1>
-    <form action="/proses" method=post enctype=multipart/form-data>
-      <p><textarea name="loker_text" rows="10" cols="50" placeholder="Tempel teks lowongan kerja di sini..."></textarea></p>
-      <p>Atau unggah gambar poster loker: <input type=file name=file></p>
-      <p><input type=submit value=Proses></p>
-    </form>
-    '''
+    hasil_ai = None
+    if request.method == "POST":
+        info_loker = request.form.get("info_loker")
+        master_profil = baca_master_profil()
 
-@app.route('/proses', methods=['POST'])
-def proses_loker():
-    # Logika untuk menangkap input
-    loker_text = request.form.get('loker_text')
-    file = request.files.get('file')
-    
-    file_path = None
-    if file and file.filename != '':
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-    
-    if not loker_text and not file_path:
-        return "Harap masukkan teks loker atau unggah gambar.", 400
+        prompt = f"""
+        Kamu adalah asisten karier profesional. Tugasmu adalah mencocokkan profil kandidat dengan informasi lowongan kerja di bawah ini, lalu membuatkan draf surat lamaran kerja (Cover Letter) dan poin-poin ringkasan CV yang relevan.
 
-    # Di sini nantinya Anda akan memanggil fungsi AI
-    # Contoh pemanggilan dummy:
-    # hasil_ai = proses_dengan_gemini(loker_text, file_path)
-    
-    return jsonify({
-        "status": "Berhasil menerima data",
-        "teks_diterima": bool(loker_text),
-        "file_diterima": file_path
-    })
+        ATURAN KETAT:
+        - Hanya gunakan fakta, pengalaman, dan keahlian yang tertulis di MASTER PROFIL.
+        - DILARANG mengarang atau melebih-lebihkan skill yang tidak ada di master profil.
+        - Gunakan bahasa Indonesia yang profesional, sopan, dan langsung ke inti (tidak bertele-tele).
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+        MASTER PROFIL KANDIDAT:
+        {master_profil}
+
+        INFORMASI LOWONGAN KERJA:
+        {info_loker}
+
+        FORMAT OUTPUT:
+        1. Analisis Kecocokan Singkat (2-3 poin)
+        2. Draf Surat Lamaran Kerja (Siap kirim)
+        3. Poin Pengalaman & Skill yang Harus Ditonjolkan di CV
+        """
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        hasil_ai = response.text
+
+    return render_template("index.html", hasil_ai=hasil_ai)
+
+if __name__ == "__main__":
+    app.run(debug=True)
