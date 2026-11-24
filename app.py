@@ -1,7 +1,9 @@
 import os
+import time
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
 from google import genai
+from google.genai.errors import ServerError
 
 # 1. Muat API Key dari file .env
 load_dotenv()
@@ -46,11 +48,33 @@ def index():
         3. Poin Pengalaman & Skill yang Harus Ditonjolkan di CV
         """
 
-        response = client.models.generate_content(
-            model="gemini-3.8-flash",
-            contents=prompt
-        )
-        hasil_ai = response.text
+        daftar_model = [
+            "gemini-3.8-flash",
+            "gemini-3.7-flash",
+            "gemini-3.5-flash-lite",
+            "gemini-flash-lite-latest"
+        ]
+        
+        for nama_model in daftar_model:
+            try:
+                response = client.models.generate_content(
+                    model=nama_model,
+                    contents=prompt
+                )
+                hasil_ai = response.text
+                break  # Berhenti jika sudah berhasil
+            except ServerError as e:
+                if e.code == 503:
+                    time.sleep(2)  # Tunggu 2 detik sebelum mencoba model berikutnya
+                    continue
+                else:
+                    hasil_ai = f"Terjadi gangguan server Google: {e}"
+                    break
+            except Exception as e:
+                hasil_ai = f"Terjadi kesalahan: {e}"
+                break
+        else:
+            hasil_ai = "Server AI sedang sangat sibuk di semua model. Silakan coba klik tombol proses beberapa saat lagi."
 
     return render_template("index.html", hasil_ai=hasil_ai)
 
