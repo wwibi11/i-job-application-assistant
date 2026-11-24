@@ -54,10 +54,13 @@ def index():
             ATURAN KETAT:
             1. Gunakan HANYA fakta yang ada di MASTER PROFIL. JANGAN mengarang skill, pengalaman, atau gelar yang tidak tertulis.
             2. Gunakan tanggal surat: Kebumen, {tanggal_hari_ini}
-            3. Kembalikan respons HANYA dalam format JSON yang valid dengan struktur persis seperti berikut:
+            3. Ekstrak sumber informasi loker (misal: Instagram, LinkedIn, JobStreet, atau "Tidak disebutkan di teks") serta alamat email/link tujuan pengiriman lamaran dari teks LOWONGAN KERJA.
+            4. Kembalikan respons HANYA dalam format JSON yang valid dengan struktur persis seperti berikut:
             {{
                 "posisi": "Nama posisi yang dilamar",
                 "perusahaan": "Nama perusahaan tujuan",
+                "sumber_info": "Sumber informasi lowongan (contoh: LinkedIn / Instagram / Tidak disebutkan)",
+                "kontak_pengiriman": "Email HRD, link pendaftaran, atau subjek email yang diminta",
                 "skor_kecocokan": "Persentase kecocokan (contoh: 85%)",
                 "analisis_kecocokan": [
                     "Poin analisis 1",
