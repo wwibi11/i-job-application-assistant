@@ -1,5 +1,8 @@
 import os
 import time
+import json                      
+from datetime import datetime     
+from google.genai import types     
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
 from google import genai
@@ -18,65 +21,94 @@ client = genai.Client(api_key=api_key)
 app = Flask(__name__)
 
 def baca_master_profil():
-    with open("master_profil.txt", "r", encoding="utf-8") as file:
-        return file.read()
+    try:
+        with open("master_profil.txt", "r", encoding="utf-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        return "File master_profil.txt tidak ditemukan."
+
+def get_tanggal_indonesia():
+    bulan = [
+        "", "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ]
+    sekarang = datetime.now()
+    return f"{sekarang.day} {bulan[sekarang.month]} {sekarang.year}"
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    hasil_ai = None
+    hasil = None
+    error_msg = None
+    loker_input = ""
+
     if request.method == "POST":
-        info_loker = request.form.get("info_loker")
-        master_profil = baca_master_profil()
+        loker_input = request.form.get("loker", "").strip()
+        if loker_input:
+            master_profil = baca_master_profil()
+            tanggal_hari_ini = get_tanggal_indonesia()
 
-        prompt = f"""
-        Kamu adalah asisten karier profesional. Tugasmu adalah mencocokkan profil kandidat dengan informasi lowongan kerja di bawah ini, lalu membuatkan draf surat lamaran kerja (Cover Letter) dan poin-poin ringkasan CV yang relevan.
+            prompt = f"""
+            Kamu adalah asisten rekrutmen dan penulis karier profesional.
+            Tugasmu adalah menyesuaikan lamaran kerja berdasarkan MASTER PROFIL pelamar dan LOWONGAN KERJA berikut.
 
-        ATURAN KETAT:
-        - Hanya gunakan fakta, pengalaman, dan keahlian yang tertulis di MASTER PROFIL.
-        - DILARANG mengarang atau melebih-lebihkan skill yang tidak ada di master profil.
-        - Gunakan bahasa Indonesia yang profesional, sopan, dan langsung ke inti (tidak bertele-tele).
+            ATURAN KETAT:
+            1. Gunakan HANYA fakta yang ada di MASTER PROFIL. JANGAN mengarang skill, pengalaman, atau gelar yang tidak tertulis.
+            2. Gunakan tanggal surat: Kebumen, {tanggal_hari_ini}
+            3. Kembalikan respons HANYA dalam format JSON yang valid dengan struktur persis seperti berikut:
+            {{
+                "posisi": "Nama posisi yang dilamar",
+                "perusahaan": "Nama perusahaan tujuan",
+                "skor_kecocokan": "Persentase kecocokan (contoh: 85%)",
+                "analisis_kecocokan": [
+                    "Poin analisis 1",
+                    "Poin analisis 2",
+                    "Poin analisis 3"
+                ],
+                "surat_lamaran": "Teks lengkap surat lamaran kerja formal dalam bahasa Indonesia (gunakan \\n untuk baris baru, tanpa format markdown ** atau #)",
+                "poin_cv": [
+                    "Poin pengalaman/skill 1 yang relevan untuk ditonjolkan di CV",
+                    "Poin pengalaman/skill 2 yang relevan untuk ditonjolkan di CV",
+                    "Poin pengalaman/skill 3 yang relevan untuk ditonjolkan di CV"
+                ]
+            }}
 
-        MASTER PROFIL KANDIDAT:
-        {master_profil}
+            MASTER PROFIL:
+            {master_profil}
 
-        INFORMASI LOWONGAN KERJA:
-        {info_loker}
+            LOWONGAN KERJA:
+            {loker_input}
+            """
 
-        FORMAT OUTPUT:
-        1. Analisis Kecocokan Singkat (2-3 poin)
-        2. Draf Surat Lamaran Kerja (Siap kirim)
-        3. Poin Pengalaman & Skill yang Harus Ditonjolkan di CV
-        """
+            daftar_model = [
+                "gemini-3.8-flash",
+                "gemini-3.7-flash",
+                "gemini-3.6-flash",
+                "gemini-3.5-flash-lite",
+                "gemini-2.5-flash",
+                "gemini-2.5-flash-lite"
+            ]
 
-        daftar_model = [
-            "gemini-3.8-flash",
-            "gemini-3.7-flash",
-            "gemini-3.5-flash-lite",
-            "gemini-flash-lite-latest"
-        ]
-        
-        for nama_model in daftar_model:
-            try:
-                response = client.models.generate_content(
-                    model=nama_model,
-                    contents=prompt
-                )
-                hasil_ai = response.text
-                break  # Berhenti jika sudah berhasil
-            except ServerError as e:
-                if e.code == 503:
-                    time.sleep(2)  # Tunggu 2 detik sebelum mencoba model berikutnya
-                    continue
-                else:
-                    hasil_ai = f"Terjadi gangguan server Google: {e}"
+            for indeks, model_name in enumerate(daftar_model):
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json"
+                        )
+                    )
+                    # Parse string JSON dari AI menjadi dictionary Python
+                    hasil = json.loads(response.text)
+                    error_msg = None
                     break
-            except Exception as e:
-                hasil_ai = f"Terjadi kesalahan: {e}"
-                break
-        else:
-            hasil_ai = "Server AI sedang sangat sibuk di semua model. Silakan coba klik tombol proses beberapa saat lagi."
+                except Exception as e:
+                    error_msg = f"Gagal memproses dengan {model_name}: {str(e)}"
+                    # Beri jeda 2 detik sebelum mencoba model berikutnya jika masih ada antrean
+                    if indeks < len(daftar_model) - 1:
+                        time.sleep(2)
+                    continue
 
-    return render_template("index.html", hasil_ai=hasil_ai)
+    return render_template("index.html", hasil=hasil, error_msg=error_msg, loker_input=loker_input)
 
 if __name__ == "__main__":
     app.run(debug=True)
