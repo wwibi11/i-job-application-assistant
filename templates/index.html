@@ -36,9 +36,14 @@
 
     {% if hasil %}
     <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
+    <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
     <div class="card">
         <h2>1. Analisis Kecocokan <span class="badge">Kecocokan: {{ hasil.skor_kecocokan }}</span></h2>
-        <p><strong>Target:</strong> {{ hasil.posisi }} — {{ hasil.perusahaan }}</p>
+        <p>
+            <strong>Target:</strong> {{ hasil.posisi }} — {{ hasil.perusahaan }}<br>
+            <strong>Sumber Info Loker:</strong> {{ hasil.sumber_info }}<br>
+            <strong>Kirim Lamaran Ke:</strong> {{ hasil.kontak_pengiriman }}
+        </p>
         <ul>
             {% for poin in hasil.analisis_kecocokan %}
             <li>{{ poin }}</li>
