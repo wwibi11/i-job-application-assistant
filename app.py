@@ -165,6 +165,7 @@ def download_dokumen(format_file):
         )
 
     # --- OPSI 2: GENERATE PDF (.PDF) ---
+    # --- OPSI 2: GENERATE PDF (.PDF) ---
     elif format_file == "pdf":
         # Ukuran F4 dalam milimeter: 215 mm x 330 mm
         pdf = FPDF(orientation="P", unit="mm", format=(215, 330))
@@ -175,9 +176,12 @@ def download_dokumen(format_file):
         # FPDF built-in 'Times' adalah Times New Roman standar PDF
         pdf.set_font("Times", size=12)
 
-        # Bersihkan karakter Unicode khusus (seperti tanda kutip lengkung / em-dash) agar aman di font standar PDF
+        # Bersihkan karakter Unicode khusus & non-breaking space (\xa0) dari browser
         teks_bersih = (
             surat_teks
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\xa0", " ")
             .replace("\u2013", "-")
             .replace("\u2014", "-")
             .replace("\u2018", "'")
@@ -187,12 +191,13 @@ def download_dokumen(format_file):
             .replace("\u2022", "-")
         )
 
-        # Tulis tiap baris dengan tinggi baris 6 mm (setara spasi 1.15 untuk font 12pt)
+        # Tulis tiap baris dengan lebar efektif halaman (pdf.epw)
         for baris in teks_bersih.split("\n"):
+            pdf.set_x(pdf.l_margin)
             if baris.strip() == "":
                 pdf.ln(4)  # Jarak antar paragraf
             else:
-                pdf.multi_cell(w=0, h=6, text=baris)
+                pdf.multi_cell(w=pdf.epw, h=6, text=baris)
 
         pdf_bytes = bytes(pdf.output())
         buffer = io.BytesIO(pdf_bytes)
@@ -204,7 +209,6 @@ def download_dokumen(format_file):
             download_name=f"{nama_file_dasar}.pdf",
             mimetype="application/pdf"
         )
-
     return "Format tidak didukung.", 400
 
 if __name__ == "__main__":

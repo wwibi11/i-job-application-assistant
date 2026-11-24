@@ -1,112 +1,340 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Job Application Assistant</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; max-width: 900px; margin: 30px auto; padding: 0 20px; }
-        .card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 25px; }
-        h1, h2, h3 { color: #1e293b; margin-top: 0; }
-        textarea { width: 100%; height: 180px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; font-size: 14px; box-sizing: border-box; }
-        button { background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 12px; font-weight: 600; }
-        button:hover { background: #1d4ed8; }
-        .btn-copy { background: #059669; padding: 6px 14px; font-size: 13px; float: right; margin-top: 0; }
-        .btn-copy:hover { background: #047857; }
-        .badge { display: inline-block; background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; }
-        .surat-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 6px; white-space: pre-wrap; line-height: 1.6; font-family: 'Times New Roman', Times, serif; font-size: 15px; }
-        .error { background: #fee2e2; color: #991b1b; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-        ul { line-height: 1.7; padding-left: 20px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Penyesuai Lamaran Kerja — Tata Letak 2 Kolom</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'light-primary': '#0037B0',
+            'light-on-primary': '#FFFFFF',
+            'light-primary-container': '#1D4ED8',
+            'light-on-primary-container': '#CAD3FF',
+            'light-secondary': '#4D5B94',
+            'light-on-secondary': '#FFFFFF',
+            'light-secondary-container': '#B0BEFE',
+            'light-on-secondary-container': '#3D4C83',
+            'light-tertiary': '#7F2500',
+            'light-on-tertiary': '#FFFFFF',
+            'light-tertiary-container': '#A73400',
+            'light-on-tertiary-container': '#FFC9B7',
+            'light-error': '#BF0715',
+            'light-on-error': '#FFFFFF',
+            'light-error-container': '#FFDAD6',
+            'light-on-error-container': '#93000B',
+            'light-success': '#006C4A',
+            'light-on-success': '#FFFFFF',
+            'light-success-container': '#85F8C4',
+            'light-on-success-container': '#002114',
+            'light-background': '#FAF8FF',
+            'light-on-background': '#1A1B23',
+            'light-surface': '#FAF8FF',
+            'light-surface-dim': '#D9D9E5',
+            'light-surface-bright': '#FAF8FF',
+            'light-surface-container-lowest': '#FFFFFF',
+            'light-surface-container-low': '#F3F2FE',
+            'light-surface-container': '#EDEDF9',
+            'light-surface-container-high': '#E8E7F3',
+            'light-surface-container-highest': '#E2E1ED',
+            'light-on-surface': '#1A1B23',
+            'light-surface-variant': '#E0E1F4',
+            'light-on-surface-variant': '#434655',
+            'light-outline': '#747686',
+            'light-outline-variant': '#C4C5D7',
+            'light-inverse-surface': '#2E3039',
+            'light-inverse-on-surface': '#F0F0FB',
+            'light-inverse-primary': '#B7C4FF',
+          },
+          borderRadius: {
+            'sm': '4px',
+            'DEFAULT': '8px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '24px',
+            'full': '9999px',
+          },
+          spacing: {
+            'gutter-xs': '4px',
+            'gutter-sm': '8px',
+            'gutter-md': '16px',
+            'gutter-lg': '24px',
+            'gutter-xl': '32px',
+            'section': '40px',
+            'page-margin': '24px',
+          },
+          fontFamily: {
+            'display': ['"Red Hat Text"', 'sans-serif'],
+            'headline': ['"Red Hat Text"', 'sans-serif'],
+            'title': ['"Instrument Sans"', 'sans-serif'],
+            'body': ['"Instrument Sans"', 'sans-serif'],
+            'label': ['"Instrument Sans"', 'sans-serif'],
+            'mono': ['"Red Hat Mono"', 'monospace'],
+          },
+          fontSize: {
+            'headline-lg': ['28px', { lineHeight: '34px', letterSpacing: '-0.25px', fontWeight: '700' }],
+            'headline-md': ['22px', { lineHeight: '28px', letterSpacing: '-0.15px', fontWeight: '700' }],
+            'title-md': ['16px', { lineHeight: '24px', letterSpacing: '0px', fontWeight: '600' }],
+            'body-lg': ['16px', { lineHeight: '26px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-md': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+            'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.1px', fontWeight: '600' }],
+            'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.2px', fontWeight: '500' }],
+            'mono-md': ['14px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '600' }],
+          },
+          transitionDuration: {
+            'state-change': '120ms',
+          },
+          transitionTimingFunction: {
+            'state-change': 'ease-out',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Red+Hat+Mono:wght@500;600&family=Red+Hat+Text:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <style>
+    .material-symbols-outlined {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-light-surface text-light-on-surface font-body antialiased">
 
-    <div class="card">
-        <h1>AI Penyesuai Lamaran Kerja</h1>
-        <form method="POST">
-            <label for="loker"><strong>Tempel Deskripsi Lowongan Kerja:</strong></label><br><br>
-            <textarea name="loker" id="loker" placeholder="Paste teks lowongan kerja di sini..." required>{{ loker_input }}</textarea>
-            <button type="submit">Buat Draf Lamaran</button>
-        </form>
-    </div>
+  <div class="min-h-screen w-full py-gutter-lg px-gutter-md md:px-gutter-lg">
+    <main class="max-w-7xl mx-auto grid grid-cols-1 gap-gutter-lg">
 
-    {% if error_msg %}
-    <div class="error">{{ error_msg }}</div>
-    {% endif %}
-
-    {% if hasil %}
-    <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
-    <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
-    <div class="card">
-        <h2>1. Analisis Kecocokan <span class="badge">Kecocokan: {{ hasil.skor_kecocokan }}</span></h2>
-        <p>
-            <strong>Target:</strong> {{ hasil.posisi }} — {{ hasil.perusahaan }}<br>
-            <strong>Sumber Info Loker:</strong> {{ hasil.sumber_info }}<br>
-            <strong>Kirim Lamaran Ke:</strong> {{ hasil.kontak_pengiriman }}
-        </p>
-        <ul>
-            {% for poin in hasil.analisis_kecocokan %}
-            <li>{{ poin }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <!-- Bagian 2: Template Surat Lamaran -->
-    <!-- Bagian 2: Template Surat Lamaran -->
-    <div class="card">
-        <div style="float: right; display: flex; gap: 8px;">
-            <button type="button" class="btn-copy" onclick="copyText('surat-teks')">Salin Teks</button>
-            <button type="button" class="btn-copy" style="background: #2563eb;" onclick="unduhDokumen('docx')">Unduh Word (.docx)</button>
-            <button type="button" class="btn-copy" style="background: #dc2626;" onclick="unduhDokumen('pdf')">Unduh PDF (.pdf)</button>
+      <!-- Header Ringkas di Atas -->
+      <header class="flex flex-wrap items-center justify-between gap-gutter-md bg-light-surface-container-lowest border border-light-outline-variant rounded-md px-gutter-lg py-gutter-md shadow-sm">
+        <div class="grid grid-cols-1 gap-gutter-xs">
+          <h1 id="page-title" class="font-headline text-headline-lg text-light-on-surface text-balance">
+            AI Penyesuai Lamaran Kerja
+          </h1>
+          <p class="font-body text-body-md text-light-on-surface-variant text-pretty">
+            Tempel deskripsi lowongan di sisi kiri, lalu tinjau analisis kecocokan dan sunting draf surat lamaran di sisi kanan.
+          </p>
         </div>
-        <h2>2. Draf Surat Lamaran</h2>
-        <p style="font-size: 13px; color: #64748b; margin-top: -8px;">*Anda bisa mengklik teks di bawah ini untuk mengedit langsung sebelum mengunduh.</p>
-        
-        <div class="surat-box" id="surat-teks" contenteditable="true">{{ hasil.surat_lamaran }}</div>
 
-        <!-- Form tersembunyi untuk mengirim teks surat ke backend saat klik Unduh -->
-        <form id="form-download" method="POST" style="display: none;">
-            <textarea name="surat_teks" id="input-surat-teks"></textarea>
-            <input type="hidden" name="posisi" value="{{ hasil.posisi }}">
-            <input type="hidden" name="perusahaan" value="{{ hasil.perusahaan }}">
-        </form>
-    </div>
+        <div class="flex flex-wrap items-center gap-gutter-sm">
+          <span id="status-toast" role="status" aria-live="polite" class="hidden font-label text-label-sm px-3 py-1.5 rounded-full bg-light-success-container text-light-on-success-container"></span>
+          <span id="badge-status" role="status" class="inline-flex items-center gap-gutter-xs px-3 py-1 rounded-full bg-light-success-container text-light-on-success-container font-label text-label-sm">
+            <span class="material-symbols-outlined text-body-md" aria-hidden="true">auto_awesome</span>
+            <span id="badge-status-text">Siap Menganalisis</span>
+          </span>
+        </div>
+      </header>
 
-    <!-- Bagian 3: Poin CV -->
-    <div class="card">
-        <h2>3. Poin CV yang Harus Ditonjolkan</h2>
-        <ul>
-            {% for cv in hasil.poin_cv %}
-            <li>{{ cv }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+      <!-- Kotak Error dari Backend Python/Gemini -->
+      {% if error_msg %}
+      <div id="error-banner" role="alert" class="bg-light-error-container border border-light-error text-light-on-error-container rounded-md p-gutter-md flex items-center gap-gutter-sm">
+        <span class="material-symbols-outlined text-title-md" aria-hidden="true">error</span>
+        <span class="font-body text-body-md">{{ error_msg }}</span>
+      </div>
+      {% endif %}
 
-    <script>
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Teks surat lamaran berhasil disalin!");
-            });
-        }
-    </script>
-    <script>
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Teks surat lamaran berhasil disalin!");
-            });
-        }
+      <!-- Tata Letak 2 Kolom -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-lg items-start">
 
-        function unduhDokumen(format) {
-            const teksSurat = document.getElementById('surat-teks').innerText;
-            const form = document.getElementById('form-download');
-            document.getElementById('input-surat-teks').value = teksSurat;
-            form.action = '/download/' + format;
-            form.submit();
-        }
-    </script>
+        <!-- Kolom Kiri: Input Lowongan + Analisis Kecocokan + Poin CV -->
+        <div class="{{ 'lg:col-span-5' if hasil else 'lg:col-span-12 max-w-3xl mx-auto w-full' }} grid grid-cols-1 gap-gutter-lg">
+
+          <!-- Kartu Input Deskripsi Lowongan -->
+          <section aria-label="Formulir Deskripsi Lowongan Kerja" class="bg-light-surface-container-lowest border border-light-outline-variant rounded-md p-gutter-lg shadow-sm grid grid-cols-1 gap-gutter-md">
+            <form id="form-loker" method="POST" action="/" class="grid grid-cols-1 gap-gutter-md" onsubmit="setLoadingState()">
+              <label for="loker" class="grid grid-cols-1 gap-gutter-sm">
+                <span class="font-label text-label-lg text-light-on-surface">
+                  Tempel Deskripsi Lowongan Kerja:
+                </span>
+                <textarea name="loker" id="loker" rows="7" required placeholder="Paste teks lowongan kerja di sini..." aria-describedby="loker-hint" class="w-full rounded border border-light-outline-variant bg-light-surface-container-low p-gutter-md font-body text-body-md text-light-on-surface placeholder:text-light-outline focus:bg-light-surface-container-lowest focus:border-light-primary focus:ring-2 focus:ring-light-primary/20 transition-colors duration-state-change ease-state-change">{{ loker_input }}</textarea>
+                <span id="loker-hint" class="font-label text-label-sm text-light-on-surface-variant">
+                  Sertakan posisi, perusahaan, kualifikasi, dan kontak pengiriman.
+                </span>
+              </label>
+
+              <div class="flex flex-wrap items-center gap-gutter-sm">
+                <button id="btn-submit" type="submit" class="inline-flex items-center justify-center gap-gutter-sm px-5 py-2.5 rounded bg-light-primary text-light-on-primary font-label text-label-lg hover:bg-light-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light-primary focus-visible:ring-offset-2 transition-colors duration-state-change ease-state-change">
+                  <span class="material-symbols-outlined text-title-md" aria-hidden="true">edit_document</span>
+                  <span id="btn-submit-text">Buat Draf Lamaran</span>
+                </button>
+                <button type="button" onclick="clearLoker()" class="inline-flex items-center justify-center gap-gutter-xs px-4 py-2.5 rounded bg-light-surface-container text-light-on-surface-variant font-label text-label-lg hover:bg-light-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light-primary transition-colors duration-state-change ease-state-change">
+                  <span>Bersihkan</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          {% if hasil %}
+          <!-- Bagian 1: Ringkasan & Analisis Kecocokan -->
+          <section id="section-analisis" aria-labelledby="heading-analisis" class="bg-light-surface-container-lowest border border-light-outline-variant rounded-md p-gutter-lg shadow-sm grid grid-cols-1 gap-gutter-md">
+            <header class="flex flex-wrap items-center justify-between gap-gutter-sm">
+              <h2 id="heading-analisis" class="font-headline text-headline-md text-light-on-surface">
+                1. Analisis Kecocokan
+              </h2>
+              <span id="badge-skor" role="status" class="inline-flex items-center gap-gutter-xs px-3 py-1 rounded-full bg-light-secondary-container text-light-on-secondary-container font-mono text-mono-md tabular-nums">
+                <span>Kecocokan: {{ hasil.skor_kecocokan }}</span>
+              </span>
+            </header>
+
+            <div class="grid grid-cols-1 gap-gutter-sm bg-light-surface-container-low border border-light-outline-variant rounded p-gutter-md">
+              <div class="grid grid-cols-1 gap-gutter-xs">
+                <span class="font-label text-label-sm text-light-on-surface-variant">Target</span>
+                <span id="meta-target" class="font-title text-title-md text-light-on-surface">{{ hasil.posisi }} — {{ hasil.perusahaan }}</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter-sm">
+                <div class="grid grid-cols-1 gap-gutter-xs">
+                  <span class="font-label text-label-sm text-light-on-surface-variant">Sumber Info Loker</span>
+                  <span id="meta-sumber" class="font-body text-body-md text-light-on-surface">{{ hasil.sumber_info }}</span>
+                </div>
+                <div class="grid grid-cols-1 gap-gutter-xs">
+                  <span class="font-label text-label-sm text-light-on-surface-variant">Kirim Lamaran Ke</span>
+                  <span id="meta-kontak" class="font-mono text-mono-md text-light-primary break-all">{{ hasil.kontak_pengiriman }}</span>
+                </div>
+              </div>
+            </div>
+
+            <ul id="list-analisis" class="grid grid-cols-1 gap-gutter-sm pl-5 list-disc font-body text-body-md text-light-on-surface">
+              {% for poin in hasil.analisis_kecocokan %}
+              <li class="text-pretty">{{ poin }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+
+          <!-- Bagian 3: Poin CV -->
+          <section id="section-cv" aria-labelledby="heading-cv" class="bg-light-surface-container-lowest border border-light-outline-variant rounded-md p-gutter-lg shadow-sm grid grid-cols-1 gap-gutter-md">
+            <header>
+              <h2 id="heading-cv" class="font-headline text-headline-md text-light-on-surface">
+                3. Poin CV yang Harus Ditonjolkan
+              </h2>
+            </header>
+            <ul id="list-cv" class="grid grid-cols-1 gap-gutter-sm pl-5 list-disc font-body text-body-md text-light-on-surface">
+              {% for cv in hasil.poin_cv %}
+              <li class="text-pretty">{{ cv }}</li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+
+        </div>
+
+        <!-- Kolom Kanan: Draf Surat Lamaran (Editor Utama) -->
+        {% if hasil %}
+        <div class="lg:col-span-7">
+          <section id="section-surat" aria-labelledby="heading-surat" class="bg-light-surface-container-lowest border border-light-outline-variant rounded-md p-gutter-lg shadow-sm grid grid-cols-1 gap-gutter-md">
+            <header class="grid grid-cols-1 gap-gutter-md border-b border-light-outline-variant pb-gutter-md">
+              <div class="flex flex-wrap items-center justify-between gap-gutter-sm">
+                <h2 id="heading-surat" class="font-headline text-headline-md text-light-on-surface">
+                  2. Draf Surat Lamaran
+                </h2>
+                <div class="flex flex-wrap items-center gap-gutter-sm">
+                  <button type="button" onclick="copyText('surat-teks')" class="inline-flex items-center justify-center gap-gutter-xs px-3.5 py-2 rounded bg-light-success text-light-on-success font-label text-label-lg hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light-success focus-visible:ring-offset-2 transition-opacity duration-state-change ease-state-change">
+                    <span class="material-symbols-outlined text-title-md" aria-hidden="true">content_copy</span>
+                    <span>Salin Teks</span>
+                  </button>
+
+                  <button type="button" onclick="unduhDokumen('docx')" class="inline-flex items-center justify-center gap-gutter-xs px-3.5 py-2 rounded bg-light-primary-container text-light-on-primary font-label text-label-lg hover:bg-light-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light-primary focus-visible:ring-offset-2 transition-colors duration-state-change ease-state-change">
+                    <span class="material-symbols-outlined text-title-md" aria-hidden="true">description</span>
+                    <span>Unduh Word (.docx)</span>
+                  </button>
+
+                  <button type="button" onclick="unduhDokumen('pdf')" class="inline-flex items-center justify-center gap-gutter-xs px-3.5 py-2 rounded bg-light-error text-light-on-error font-label text-label-lg hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-light-error focus-visible:ring-offset-2 transition-opacity duration-state-change ease-state-change">
+                    <span class="material-symbols-outlined text-title-md" aria-hidden="true">picture_as_pdf</span>
+                    <span>Unduh PDF (.pdf)</span>
+                  </button>
+                </div>
+              </div>
+
+              <p class="font-body text-body-md text-light-on-surface-variant">
+                *Anda bisa mengklik teks di bawah ini untuk mengedit langsung sebelum menyalin atau mengunduh.
+              </p>
+            </header>
+
+            <div id="surat-teks" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Draf Surat Lamaran yang dapat disunting" class="bg-light-surface-container-low border border-light-outline-variant rounded p-gutter-lg font-body text-body-lg text-light-on-surface whitespace-pre-wrap focus:bg-light-surface-container-lowest focus:border-light-primary focus:outline-none focus:ring-2 focus:ring-light-primary/20 transition-colors duration-state-change ease-state-change">{{ hasil.surat_lamaran }}</div>
+
+            <!-- Form Tersembunyi untuk Pengunduhan ke Backend -->
+            <form id="form-download" method="POST" style="display: none;">
+              <textarea name="surat_teks" id="input-surat-teks"></textarea>
+              <input type="hidden" name="posisi" value="{{ hasil.posisi }}">
+              <input type="hidden" name="perusahaan" value="{{ hasil.perusahaan }}">
+            </form>
+          </section>
+        </div>
+        {% endif %}
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    function showToast(message) {
+      const toast = document.getElementById('status-toast');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3200);
+    }
+
+    function setLoadingState() {
+      const btn = document.getElementById('btn-submit');
+      const btnText = document.getElementById('btn-submit-text');
+      const badgeText = document.getElementById('badge-status-text');
+      if (btn && btnText) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-wait');
+        btnText.textContent = 'Memproses dengan AI...';
+      }
+      if (badgeText) {
+        badgeText.textContent = 'Sedang Menganalisis...';
+      }
+    }
+
+    function clearLoker() {
+      const textarea = document.getElementById('loker');
+      if (textarea) {
+        textarea.value = '';
+        textarea.focus();
+      }
+    }
+
+    function copyText(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const text = el.innerText;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Teks surat lamaran berhasil disalin!');
+        }).catch(() => {
+          showToast('Gagal menyalin otomatis, silakan blok dan tekan Ctrl+C.');
+        });
+      }
+    }
+
+    function unduhDokumen(format) {
+      const teksSurat = document.getElementById('surat-teks').innerText;
+      const form = document.getElementById('form-download');
+      document.getElementById('input-surat-teks').value = teksSurat;
+      form.action = '/download/' + format;
+      form.submit();
+      const ext = format === 'docx' ? 'Word (.docx)' : 'PDF (.pdf)';
+      showToast('Mengunduh file ' + ext + '...');
+    }
+  </script>
 
 </body>
 </html>
